@@ -79,7 +79,7 @@ ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT = 2490368, 2621440, 2424832, 25559
 
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description="Lab 3：Tello EDU 巡檢")
-    p.add_argument("--weights", default="models/yolo11n.pt", help="YOLO 權重")
+    p.add_argument("--weights", default="models/yolo26n.pt", help="YOLO 權重")
     p.add_argument("--conf", type=float, default=0.25, help="YOLO 信心度門檻")
     p.add_argument("--out", default="runs", help="輸出根目錄")
     p.add_argument("--every", type=int, default=10,

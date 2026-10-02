@@ -65,7 +65,7 @@ def parse_args(argv=None):
     p.add_argument("--source", required=True, choices=("image", "video", "tello"),
                    help="來源種類。image 一張不漏；video/tello 會丟幀")
     p.add_argument("--path", help="image：圖片檔或資料夾；video：影片檔或鏡頭編號")
-    p.add_argument("--weights", default="models/yolo11n.pt", help="YOLO 權重")
+    p.add_argument("--weights", default="models/yolo26n.pt", help="YOLO 權重")
     p.add_argument("--conf", type=float, default=0.25, help="YOLO 信心度門檻")
     p.add_argument("--out", default="runs", help="輸出根目錄")
     p.add_argument("--every", type=int, default=5,

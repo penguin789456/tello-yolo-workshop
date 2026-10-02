@@ -50,7 +50,7 @@ Detection = namedtuple("Detection", "x1 y1 x2 y2 score name")
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description="Lab 2：對連續影像做 YOLO 推論")
     p.add_argument("--source", required=True, help="影片檔，或鏡頭編號（0、1…）")
-    p.add_argument("--weights", default="models/yolo11n.pt", help="YOLO 權重")
+    p.add_argument("--weights", default="models/yolo26n.pt", help="YOLO 權重")
     p.add_argument("--conf", type=float, default=0.25, help="YOLO 信心度門檻")
     p.add_argument("--out", default="runs", help="輸出根目錄")
     p.add_argument("--every", type=int, default=5,

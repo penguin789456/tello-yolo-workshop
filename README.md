@@ -69,11 +69,11 @@ pip install -r requirements.txt
 ### 2. 下載 YOLO 權重
 
 ```bat
-python -c "from ultralytics import YOLO; YOLO('yolo11n.pt')"
-move yolo11n.pt models\
+python -c "from ultralytics import YOLO; YOLO('yolo26n.pt')"
+move yolo26n.pt models\
 ```
 
-`yolo11n.pt` 是 COCO 預訓練權重，只認得 80 類，例如 `person`、`bottle`、`cup`、
+`yolo26n.pt` 是 COCO 預訓練權重，只認得 80 類，例如 `person`、`bottle`、`cup`、
 `book`、`cell phone`、`laptop`。它不認得 `pencil` 或 `pen`。
 
 ---
@@ -154,7 +154,7 @@ python labs\lab4_patrol.py --source video --path data\samples\test.mp4 --loop --
 python labs\lab4_patrol.py --source tello --preview-only
 ```
 
-要讓 Tello 畫面也做辨識，確認 `models\yolo11n.pt` 已經準備好，再執行：
+要讓 Tello 畫面也做辨識，確認 `models\yolo26n.pt` 已經準備好，再執行：
 
 ```bat
 python labs\lab3_tello.py --every 10
@@ -192,9 +192,9 @@ runs\20261002_160643\
 `index.jsonl` 一行代表一張圖：
 
 ```json
-{"file": "20261002_160644_123456_sample_01.jpg", "label": "sample_01",
- "time": "2026-10-02T16:06:44", "count": 1, "best_score": 0.3219,
- "classes": ["sports ball"], "latency_ms": 36.2}
+{"file": "20261002_195929_123456_sample_01.jpg", "label": "sample_01",
+ "time": "2026-10-02T19:59:29", "count": 1, "best_score": 0.1721,
+ "classes": ["orange"], "latency_ms": 52.4}
 ```
 
 你可以用它回查每張圖的最高分、辨識到的類別與推論耗時。
@@ -206,7 +206,7 @@ runs\20261002_160643\
 | 現象 | 做法 |
 |---|---|
 | `ModuleNotFoundError: No module named 'ultralytics'` | 先 `.venv\Scripts\activate`，再確認已安裝 `requirements.txt` |
-| 一直下載 `yolo11n.pt` | 權重沒有放到 `models\` |
+| 一直下載 `yolo26n.pt` | 權重沒有放到 `models\` |
 | 連不上 Tello | Wi-Fi 要連到 `TELLO-XXXXXX`，而且上一個 Python 程式不能還開著 |
 | 10 秒內沒有畫面 | 關掉所有 Python，等五秒再重跑 |
 | 按鍵沒反應 | 用滑鼠點一下影像視窗，讓視窗取得焦點 |

@@ -48,7 +48,7 @@ IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".bmp")
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description="Lab 1：對一批照片做 YOLO 推論")
     p.add_argument("--source", required=True, help="圖片檔或資料夾")
-    p.add_argument("--weights", default="models/yolo11n.pt", help="YOLO 權重")
+    p.add_argument("--weights", default="models/yolo26n.pt", help="YOLO 權重")
     p.add_argument("--conf", type=float, default=0.25, help="YOLO 信心度門檻")
     p.add_argument("--out", default="runs", help="輸出根目錄")
     p.add_argument("--headless", action="store_true", help="不開視窗，只存檔")

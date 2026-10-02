@@ -10,7 +10,7 @@
 # comments make the install die with UnicodeDecodeError. The Chinese
 # explanation of every pin below lives in docs/91 (troubleshooting).
 
-ultralytics==8.4.161      # YOLO inference. AGPL-3.0 - see docs/90 before redistributing
+ultralytics==8.4.171      # YOLO inference. AGPL-3.0 - see docs/90 before redistributing
 opencv-python==4.11.0.86
 djitellopy==2.5.0
 
