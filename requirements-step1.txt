@@ -1,0 +1,11 @@
+# Step 1-A: minimal deps for session 1 (drone video to PC, no model).
+# Measured 265 MB. See README.md step 1 and docs/00 (course map) for why this
+# is split from requirements.txt (1.9 GB).
+#
+# NOTE: keep this file ASCII-only. pip 24.0 and older read requirements files
+# using the system locale encoding (cp950 on zh-TW Windows), so non-ASCII
+# comments make the install die with UnicodeDecodeError.
+
+opencv-python==4.11.0.86
+numpy==2.2.5
+djitellopy==2.5.0

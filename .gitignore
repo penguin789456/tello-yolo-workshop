@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+
+# 執行結果：每跑一次就多一個資料夾，不進版控
+runs/
+
+# 模型權重：yolo11n.pt 約 5 MB，仍然不該進版控（見 README 步驟 3）
+models/*.pt

@@ -1,0 +1,31 @@
+# Step 1-B: full deps, needed from session 2 on. About 1.9 GB (torch is 1.2 GB).
+# Install BEFORE session 2, not during it. Session 1 only needs
+# requirements-step1.txt (265 MB).
+#
+#     python -m venv .venv
+#     .venv\Scripts\activate
+#     python -m pip install --upgrade pip
+#     pip install -r requirements.txt
+#
+# NOTE: keep this file ASCII-only. pip 24.0 and older read requirements files
+# using the system locale encoding (cp950 on zh-TW Windows), so non-ASCII
+# comments make the install die with UnicodeDecodeError. The Chinese
+# explanation of every pin below lives in docs/91 (troubleshooting).
+
+ultralytics==8.4.161      # YOLO inference. AGPL-3.0 - see docs/90 before redistributing
+opencv-python==4.11.0.86
+djitellopy==2.5.0
+
+# torch is pinned on purpose: ultralytics only asks for torch>=1.8, so it would
+# pull the latest. torch 2.14.0 installs fine here but dies on import with
+# "OSError: [WinError 1114] ... c10.dll or one of its dependencies". That is a
+# missing VC++ runtime, not a Python problem. 2.7.0 is verified working.
+torch==2.7.0
+torchvision==0.22.0
+
+# numpy is deliberately NOT pinned - let ultralytics decide. Pinning
+# numpy==2.2.5 collides with older ultralytics (numpy<2.0.0) and pip then fails
+# with ResolutionImpossible.
+#
+# The lesson, in docs/91: pin what you actually verified breaks. Do not pin
+# something just to have a number there.
