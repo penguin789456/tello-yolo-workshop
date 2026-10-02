@@ -20,15 +20,15 @@
 
 | 節次 | 主題 | 你會完成什麼 | 主要檔案 |
 |---|---|---|---|
-| 第一節 | 測試 Tello 連線、拍照、YOLO 辨識 | 連上無人機、按 `P` 拍照、用內附圖片測試 YOLO | `lab1_tello.py`、`lab2_detect.py` |
-| 第二節 | 整合 Tello 拍照與辨識 | 把即時畫面、拍照、辨識、存檔整理成同一個流程 | `lab3_patrol.py` |
+| 第一節 | 操控與影像，分開練 | 起飛前進 100 cm 再降落；看到即時畫面並按 `P` 拍照 | `lab1_flight.py`、`lab2_capture.py` |
+| 第二節 | 整合 + 辨識 | 邊操控邊看畫面，按 `P` 拍照並對那一張做 YOLO 辨識 | `lab3_detect.py` |
 
 建議閱讀順序：
 
 1. [docs/00-課程地圖.md](docs/00-課程地圖.md)
-2. [docs/01-lab1.md](docs/01-lab1.md)：Tello 連線範例
-3. [docs/02-lab2.md](docs/02-lab2.md)：YOLO 辨識範例
-4. [docs/03-lab3.md](docs/03-lab3.md)：整合測試
+2. [docs/01-lab1.md](docs/01-lab1.md)：Tello 操控與路徑控制
+3. [docs/02-lab2.md](docs/02-lab2.md)：Tello 影像與拍照
+4. [docs/03-lab3.md](docs/03-lab3.md)：整合 + 拍照後辨識
 
 ---
 
@@ -105,25 +105,54 @@ move yolo26n.pt models\
 
 ---
 
-## 第一節：Tello 連線、拍照、YOLO 測試
+## 第一節：操控與影像，分開練
 
-### A. 先確認基本流程能跑
+### A. 先確認環境裝好了（不需要無人機）
 
 ```bat
-.venv\Scripts\activate
-python labs\lab3_patrol.py --source image --path data\samples --dry-run --headless
+.venv\Scriptsctivate
+python labs\lab3_detect.py --source video --path data\samples	est.mp4 --headless --max-frames 5 --no-model
 ```
 
-看到 `--dry-run：沒有寫入任何檔案` 就代表程式流程可以啟動。
+看到「讀 5 幀」就代表環境沒問題。`--no-model` 讓它不載 YOLO，所以這一步很快。
 
-### B. 連上 Tello 並拍照
+### B. 操控：起飛、前進 100 公分、降落
 
 1. 打開 Tello 電源，等機頭燈閃黃燈
-2. 電腦 Wi-Fi 連到 `TELLO-XXXXXX`
-3. 執行：
+2. 電腦 Wi-Fi 連到 `TELLO-XXXXXX`（沒有密碼）
+3. 先確認連得上（**這一步不會飛**）：
 
 ```bat
-python labs\lab1_tello.py --preview-only
+python labs\lab1_flight.py
+```
+
+會印出電量、高度、溫度，然後告訴你「沒有加 --path 或 --manual，所以不起飛」。
+
+確認場地空曠、前方至少 2 公尺，再跑路徑控制：
+
+```bat
+python labs\lab1_flight.py --path
+```
+
+起飛 → 前進 100 公分 → 降落。想改距離用 `--distance 150`（範圍 20~500）。
+
+想用鍵盤即時操控：
+
+```bat
+python labs\lab1_flight.py --manual --speed 20
+```
+
+> ⚠️ **方向鍵是「按一下持續移動」，放開不會停。要停請按空白鍵。**
+> 第一次實飛請用 `--speed 20`。
+
+詳細說明與首飛檢查表：[docs/01-lab1.md](docs/01-lab1.md)
+
+### C. 影像：看畫面、按 P 拍照
+
+這一支**不會飛**，無人機放桌上開機就好：
+
+```bat
+python labs\lab2_capture.py
 ```
 
 看到畫面後：
@@ -138,63 +167,64 @@ dir runs
 type runs\<剛剛產生的時間戳>\index.jsonl
 ```
 
-### C. 測試 YOLO 辨識
-
-先用內附圖片測試，不需要無人機：
+沒有無人機也能練：
 
 ```bat
-python labs\lab2_detect.py --source data\samples --headless
+python labs\lab2_capture.py --source video --path data\samples	est.mp4
 ```
 
-如果你有自己拍的照片，也可以放進 `data\mine\`：
-
-```bat
-python labs\lab2_detect.py --source data\mine
-```
-
-建議拍一張同時有瓶子和鉛筆的照片。YOLO 通常會認出瓶子，但認不出鉛筆，這可以幫你理解
-「模型只會認得它訓練過的類別」。
+詳細說明：[docs/02-lab2.md](docs/02-lab2.md)
 
 ---
 
-## 第二節：整合拍照與辨識
+## 第二節：整合 + 辨識
 
-第二節會把第一節的兩件事接起來：
-
-- Tello 或攝影機提供即時影像
-- 每隔幾幀做一次 YOLO 辨識
-- 按 `P` 可以手動拍照
-- 超過門檻的結果會自動存檔
-- 每次執行都會產生圖片與 `index.jsonl`
-
-整合版可以吃三種來源，先用測試影片練習：
+把第一節的操控和影像接起來，再加上 YOLO：
 
 ```bat
-python labs\lab3_patrol.py --source image --path data\samples --headless
-python labs\lab3_patrol.py --source video --path data\samples\test.mp4 --loop --headless --max-frames 50
-python labs\lab3_patrol.py --source tello --preview-only
+python labs\lab3_detect.py
 ```
 
-要讓 Tello 畫面也做辨識，確認 `models\yolo26n.pt` 已經準備好，再執行：
+- 畫面以原本的速度跑，**模型完全不介入**
+- 按 `P`：拍照 → 對那一張做 YOLO 辨識 → 存標註圖與結果
+- `T` 起飛、`L` 降落、空白鍵懸停、方向鍵移動、`Q` 離開
+
+按一次 `P` 會印一行：
+
+```
+拍一張 -> 20261002_203022_211540_snap000042.jpg　1 處　最高 0.44　52 ms　bottle
+```
+
+**辨識只在按 `P` 的時候做，不做連續辨識。** 原因是實測的數字：CPU 上一張要
+50~60 ms，連續跑會把畫面壓到個位數 fps，那個更新率沒辦法操控無人機。
+
+沒有無人機也能練：
 
 ```bat
-python labs\lab1_tello.py --every 10
+python labs\lab3_detect.py --source video --path data\samples	est.mp4
 ```
+
+詳細說明：[docs/03-lab3.md](docs/03-lab3.md)
 
 ---
 
 ## 常用按鍵
 
-| 鍵 | 動作 |
-|---|---|
-| `Q` / `Esc` | 離開 |
-| `P` | 拍一張並存檔 |
-| `T` | 起飛 |
-| `L` | 降落 |
-| 空白鍵 | 停止水平與旋轉速度，讓無人機懸停 |
-| 方向鍵 / `8 2 4 6` | 前後左右 |
-| `W` / `S` | 上升 / 下降 |
-| `A` / `D` | 左轉 / 右轉 |
+| 鍵 | 動作 | 哪幾支 |
+|---|---|---|
+| `Q` / `Esc` | 離開（飛行中會先降落） | 三支都有 |
+| `P` | 拍一張並存檔 | lab2（只拍照）、lab3（拍照＋辨識） |
+| `T` / `L` | 起飛 / 降落 | lab1 `--manual`、lab3 |
+| 空白鍵 | 四軸速度歸零，讓無人機懸停 | lab1 `--manual`、lab3 |
+| 方向鍵 / `8 2 4 6` | 前進 / 後退 / 左移 / 右移 | lab1 `--manual`、lab3 |
+| `W` / `S` | 上升 / 下降 | lab1 `--manual`、lab3 |
+| `A` / `D` | 左轉 / 右轉 | lab1 `--manual`、lab3 |
+| `X` | 切斷馬達（需 `--allow-emergency`） | lab1 `--manual`、lab3 |
+
+**lab2 沒有任何飛行鍵** —— 按 `T` 會印一行提示叫你去用 lab1。
+
+lab2 / lab3 的按鍵要先用滑鼠點一下影像視窗取得焦點才有效（它們走 `cv2.waitKey`）。
+lab1 沒有視窗，用 `msvcrt` 直接讀主控台 —— 那是 Windows 專用的。
 
 飛行前一定要記住：方向鍵是「按一下後持續移動」，放開不會自動停。要停請按空白鍵。
 
@@ -241,9 +271,9 @@ runs\20261002_160643\
 ## 文件
 
 - [docs/00-課程地圖.md](docs/00-課程地圖.md)：兩節課怎麼走
-- [docs/01-lab1.md](docs/01-lab1.md)：Tello 連線、預覽與拍照
-- [docs/02-lab2.md](docs/02-lab2.md)：YOLO 靜態圖片辨識
-- [docs/03-lab3.md](docs/03-lab3.md)：整合測試（三種來源）
+- [docs/01-lab1.md](docs/01-lab1.md)：Tello 操控與路徑控制（不碰影像）
+- [docs/02-lab2.md](docs/02-lab2.md)：Tello 影像與拍照（不碰飛行）
+- [docs/03-lab3.md](docs/03-lab3.md)：整合 + 按 P 辨識
 - [docs/89-逐章差異.md](docs/89-逐章差異.md)：三支程式差在哪
 - [docs/90-設計決策.md](docs/90-設計決策.md)：為什麼這樣設計
 - [docs/91-排錯手冊.md](docs/91-排錯手冊.md)：常見錯誤
