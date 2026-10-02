@@ -1,8 +1,8 @@
-"""Lab 4：整合 —— 一支工具，三種來源，兩種語意。
+"""Lab 3：整合測試 —— 一支工具，三種來源，兩種語意。
 
-    python labs\\lab4_patrol.py --source image --path data\\samples --headless
-    python labs\\lab4_patrol.py --source video --path data\\samples\\test.mp4 --max-frames 50
-    python labs\\lab4_patrol.py --source tello --preview-only
+    python labs\\lab3_patrol.py --source image --path data\\samples --headless
+    python labs\\lab3_patrol.py --source video --path data\\samples\\test.mp4 --max-frames 50
+    python labs\\lab3_patrol.py --source tello --preview-only
 
 前三章各自能跑，但使用者不會想記三支程式。這一章把它們收斂成單一入口，
 並且讓**兩種相反的語意共存於同一支程式**：
@@ -44,6 +44,15 @@ try:
 except Exception:
     pass
 
+#: 教材實測的 Python 是 3.12。下限來自 pillow（>=3.10），上限來自 torch 2.7.0
+#: —— 它只發布到 Python 3.13 的 wheel，3.14 以上根本裝不起來。
+#: 先檢查再 import 那些套件，錯誤訊息才會是人看得懂的句子。
+if not ((3, 10) <= sys.version_info[:2] <= (3, 13)):
+    raise SystemExit(
+        f"需要 Python 3.10 ~ 3.13，目前是 {sys.version.split()[0]}。\n"
+        "  建議用 3.12（教材實測的版本）。Windows 上可以用啟動器指定：\n"
+        "      py -3.12 -m venv .venv")
+
 Detection = namedtuple("Detection", "x1 y1 x2 y2 score name")
 
 #: 一個影像來源。kind 決定 read/close 怎麼做，is_live 決定要不要丟幀。
@@ -61,7 +70,7 @@ ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT = 2490368, 2621440, 2424832, 25559
 # --- 1. 參數 ---------------------------------------------------------------
 
 def parse_args(argv=None):
-    p = argparse.ArgumentParser(description="Lab 4：影像巡檢 CLI")
+    p = argparse.ArgumentParser(description="Lab 3：整合測試（影像巡檢 CLI）")
     p.add_argument("--source", required=True, choices=("image", "video", "tello"),
                    help="來源種類。image 一張不漏；video/tello 會丟幀")
     p.add_argument("--path", help="image：圖片檔或資料夾；video：影片檔或鏡頭編號")
@@ -377,7 +386,7 @@ def main(argv=None):
             if args.headless:
                 continue
 
-            cv2.imshow(f"lab4 - {source.kind}", draw_status(shown, status))
+            cv2.imshow(f"lab3 - {source.kind}", draw_status(shown, status))
             key = cv2.waitKeyEx(delay_ms if source.kind == "video" else 1)
 
             if key in (ord("q"), ord("Q"), 27):

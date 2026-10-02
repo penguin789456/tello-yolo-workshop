@@ -1,12 +1,13 @@
-"""Lab 3：接上 Tello EDU —— 連線、看畫面、用鍵盤飛、按 P 拍一張。
+"""Lab 1：Tello 連線範例 —— 連線、看畫面、用鍵盤飛、按 P 拍一張。
 
-    python labs\\lab3_tello.py --preview-only        # 先這樣，確認看得到畫面
-    python labs\\lab3_tello.py --every 10            # 邊飛邊辨識（畫面會變慢）
+    python labs\\lab1_tello.py --preview-only        # 先這樣，確認看得到畫面
+    python labs\\lab1_tello.py --every 10            # 邊飛邊辨識（畫面會變慢）
 
-和 lab2 的差別（段落編號一樣，可以直接 diff）：
+這是三支範例裡的第一支，先把「影像進得來」這件事做通。段落編號和另外兩支
+一樣，所以可以直接 diff 看差在哪：
 
-  3. 影像來源   改成 djitellopy：connect() -> streamon() -> frame_read.frame
-  7. 主迴圈     多了狀態列（電量／高度）、飛行鍵、rc 節流、finally 一定收乾淨
+  3. 影像來源   djitellopy：connect() -> streamon() -> frame_read.frame
+  7. 主迴圈     狀態列（電量／高度）、飛行鍵、rc 節流、finally 一定收乾淨
 
 ## 三條安全規則（不是寫在文件裡好看的，程式真的這樣做）
 
@@ -58,6 +59,15 @@ try:
 except Exception:
     pass
 
+#: 教材實測的 Python 是 3.12。下限來自 pillow（>=3.10），上限來自 torch 2.7.0
+#: —— 它只發布到 Python 3.13 的 wheel，3.14 以上根本裝不起來。
+#: 先檢查再 import 那些套件，錯誤訊息才會是人看得懂的句子。
+if not ((3, 10) <= sys.version_info[:2] <= (3, 13)):
+    raise SystemExit(
+        f"需要 Python 3.10 ~ 3.13，目前是 {sys.version.split()[0]}。\n"
+        "  建議用 3.12（教材實測的版本）。Windows 上可以用啟動器指定：\n"
+        "      py -3.12 -m venv .venv")
+
 Detection = namedtuple("Detection", "x1 y1 x2 y2 score name")
 
 #: Tello SDK 建議 rc 指令不要超過 20 Hz。灌太快會塞爆指令通道，反而讓起飛／
@@ -78,7 +88,7 @@ ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT = 2490368, 2621440, 2424832, 25559
 # --- 1. 參數 ---------------------------------------------------------------
 
 def parse_args(argv=None):
-    p = argparse.ArgumentParser(description="Lab 3：Tello EDU 巡檢")
+    p = argparse.ArgumentParser(description="Lab 1：Tello 連線範例")
     p.add_argument("--weights", default="models/yolo26n.pt", help="YOLO 權重")
     p.add_argument("--conf", type=float, default=0.25, help="YOLO 信心度門檻")
     p.add_argument("--out", default="runs", help="輸出根目錄")
@@ -320,7 +330,7 @@ def main(argv=None):
                 hits += 1
                 status += "  [已存]"
 
-            cv2.imshow("lab3 - Tello (T/L/SPACE/P/Q)", draw_status(shown, status))
+            cv2.imshow("lab1 - Tello (T/L/SPACE/P/Q)", draw_status(shown, status))
             key = cv2.waitKeyEx(1)
 
             # -- 飛行鍵 ------------------------------------------------------

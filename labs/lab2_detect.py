@@ -1,14 +1,14 @@
-"""Lab 1：靜態推論 —— 把一批照片跑過 YOLO，畫框、存檔、寫索引。
+"""Lab 2：YOLO 辨識範例 —— 把一批照片跑過 YOLO，畫框、存檔、寫索引。
 
-    python labs\\lab1_detect.py --source data\\samples --headless
-    python labs\\lab1_detect.py --source data\\samples\\sample_01.jpg --conf 0.3
-    python labs\\lab1_detect.py --source data\\samples --reload-each
+    python labs\\lab2_detect.py --source data\\samples --headless
+    python labs\\lab2_detect.py --source data\\samples\\sample_01.jpg --conf 0.3
+    python labs\\lab2_detect.py --source data\\samples --reload-each
 
 這一章的語意是「圖片模式」：選幾張就處理幾張，一張不漏。
 不丟幀、沒有冷卻、也不看門檻 —— 使用者挑的每一張都要有結果。讀不進來的檔案
 印一行警告跳過，不讓一張壞圖中斷整批。
 
-四支 lab 的段落順序完全一樣，方便你用 diff 看每章加了什麼：
+三支範例的段落順序完全一樣，方便你用 diff 看差在哪：
 
     1. 參數   2. 載入模型   3. 影像來源   4. 推論
     5. 畫框   6. 存檔      7. 主迴圈
@@ -37,7 +37,16 @@ try:
 except Exception:
     pass
 
-#: 一筆偵測結果。四支 lab 都用同一個形狀，lab4 看到的還是它。
+#: 教材實測的 Python 是 3.12。下限來自 pillow（>=3.10），上限來自 torch 2.7.0
+#: —— 它只發布到 Python 3.13 的 wheel，3.14 以上根本裝不起來。
+#: 先檢查再 import 那些套件，錯誤訊息才會是人看得懂的句子。
+if not ((3, 10) <= sys.version_info[:2] <= (3, 13)):
+    raise SystemExit(
+        f"需要 Python 3.10 ~ 3.13，目前是 {sys.version.split()[0]}。\n"
+        "  建議用 3.12（教材實測的版本）。Windows 上可以用啟動器指定：\n"
+        "      py -3.12 -m venv .venv")
+
+#: 一筆偵測結果。三支範例都用同一個形狀，lab3 整合版看到的還是它。
 Detection = namedtuple("Detection", "x1 y1 x2 y2 score name")
 
 IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".bmp")
@@ -46,7 +55,7 @@ IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".bmp")
 # --- 1. 參數 ---------------------------------------------------------------
 
 def parse_args(argv=None):
-    p = argparse.ArgumentParser(description="Lab 1：對一批照片做 YOLO 推論")
+    p = argparse.ArgumentParser(description="Lab 2：YOLO 辨識範例（對一批照片做推論）")
     p.add_argument("--source", required=True, help="圖片檔或資料夾")
     p.add_argument("--weights", default="models/yolo26n.pt", help="YOLO 權重")
     p.add_argument("--conf", type=float, default=0.25, help="YOLO 信心度門檻")
@@ -220,7 +229,7 @@ def main(argv=None):
             save(run_dir, overlay, dets, path.stem, latency)
 
         if not args.headless:
-            cv2.imshow("lab1 - any key = next, q = quit", overlay)
+            cv2.imshow("lab2 - any key = next, q = quit", overlay)
             if (cv2.waitKey(0) & 0xFF) in (ord("q"), 27):
                 print("使用者中斷")
                 break
