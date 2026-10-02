@@ -1,6 +1,4 @@
-# Step 1-B: full deps, needed from session 2 on. About 1.9 GB (torch is 1.2 GB).
-# Install BEFORE session 2, not during it. Session 1 only needs
-# requirements-step1.txt (265 MB).
+# Workshop dependencies. Install before class. About 1.9 GB (torch is 1.2 GB).
 #
 #     python -m venv .venv
 #     .venv\Scripts\activate

@@ -52,7 +52,7 @@ python --version
 
 ### 1. 建立環境
 
-先安裝第一節一定會用到的套件：
+安裝所有課程會用到的套件：
 
 ```bat
 git clone https://github.com/penguin789456/tello-yolo-workshop.git
@@ -60,16 +60,10 @@ cd tello-yolo-workshop
 python -m venv .venv
 .venv\Scripts\activate
 python -m pip install --upgrade pip
-pip install -r requirements-step1.txt
-```
-
-再安裝 YOLO 需要的完整套件：
-
-```bat
 pip install -r requirements.txt
 ```
 
-完整環境比較大，請不要留到上課才裝。Tello 連線後電腦會切到 `TELLO-XXXXXX` 熱點，
+套件下載比較久，請不要留到上課才裝。Tello 連線後電腦會切到 `TELLO-XXXXXX` 熱點，
 那時候沒有網際網路，不能一邊連無人機一邊下載套件。
 
 ### 2. 下載 YOLO 權重
@@ -160,7 +154,7 @@ python labs\lab4_patrol.py --source video --path data\samples\test.mp4 --loop --
 python labs\lab4_patrol.py --source tello --preview-only
 ```
 
-要讓 Tello 畫面也做辨識，確認完整環境和 `models\yolo11n.pt` 都已經準備好，再執行：
+要讓 Tello 畫面也做辨識，確認 `models\yolo11n.pt` 已經準備好，再執行：
 
 ```bat
 python labs\lab3_tello.py --every 10
